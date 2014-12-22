@@ -3,7 +3,6 @@ feature_functions.py
 Implements the feature generation mechanism
 Author: Anantharaman Narayana Iyer
 Date: 21 Nov 2014
-
 6th Dec: Org gazeteer added
 7th Dec: 
 '''
@@ -112,13 +111,50 @@ class FeatureFunctions(object):
 		return 0
 
     def fOrg_1(self, h, tag):
+        if tag != "Org":
+            return 0
+        words = self.wmap[h["wn"]]['words']        
+        if (words[h["i"]].lower() in org_list1):
+            return 1
+        else:
+            return 0
+
+    def fOrg_2(self, h, tag):
+        if tag != "Org":
+            return 0
+        words = self.wmap[h["wn"]]['words']        
+        if (words[h["i"]].lower() in org_list1):
+            if(words[h["i"]+ 1].lower() in phones):
+                return 1
+        else:
+            return 0
+    def fOrg_3(self, h ,tag): #low
+        if tag != "Org":
+            return 0
+        words = self.wmap[h["wn"]]['words']
+        if(words[h["i"] - 1 ].lower() == "from" || words[h["i"] - 1 ].lower() == "by"):
+            if(words[h["i"]].lower() in org_list1):
+                return 1
+        else:
+            return 0
+
+    def fOrg_4(self, h, tag): #low
+        if tag != "Org":
+            return 0
+        words = self.wmap[h["wn"]]['words']
         
 
     def evaluate(self, xi, tag):
         feats = []
-        for f in self.flist:
-            feats.append(int(f(xi, tag)))
+        for t, f in self.fdict.items():
+            if t == tag:
+                for f1 in f:
+                    feats.append(int(f1(self, xi, tag)))
+            else:
+                for f1 in f:
+                    feats.append(0)
         return feats
+
  
    '''
    def fVersion_1(self, h, tag):
