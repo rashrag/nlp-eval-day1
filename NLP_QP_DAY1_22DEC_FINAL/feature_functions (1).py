@@ -83,6 +83,56 @@ class FeatureFunctions(object):
         else:
             return 0
 
+   def fPhone_2(self, h, tag):
+	if tag != "Phone":
+		return 0
+	words = self.wmap[h["wn"]]['words']
+	if (h['tb'])== "Org":
+		return 1
+	else:
+		return 0
+
+   def fPhone_3(self, h, tag):
+	if tag != "Phone":
+		return 0
+	words = self.wmap[h["wn"]]['words']
+	if (h['tb'])== "Version":
+		return 1
+	else:
+		return 0
+	
+
+   def fPhone_4(self, h, tag):
+	if tag != "Phone":
+		return 0
+	words = self.wmap[h["wn"]]['words']
+	if (h['tb'])== "Family":
+		return 1
+	else:
+		return 0
+
+
+   def fPhone_5(self, h, tag):
+	if tag != "Phone":
+		return 0
+	words = self.wmap[h["wn"]]['words']
+	if (words['i']) in phones:
+		return 1
+	else:
+		return 0
+ 
+   '''
+   def fVersion_1(self, h, tag):
+	if tag != "Version":
+		return 0
+	words = self.wmap[h["wn"]]['words']
+	if (h['tb'])== "Family":
+		return 1
+		if(words[])
+	else:
+		return 0
+	
+   '''
     #------------------------------- Functions for Org tag ---------------------------------------------------------
     #------------------------------- Functions for Family tag ---------------------------------------------------------  
     #------------------------------- Functions for OS tag ---------------------------------------------------------        
