@@ -12,7 +12,7 @@ import json
 import numpy
 import pickle
 import datetime
-
+import re
 
 phones = ["phone", "phones", "smartphone", "smartphones", "mobile", "tablet", "tablets", "phablet", "phablets"]
 org_list = ['Samsung', 'Apple', 'Microsoft', 'Nokia', 'Sony', 'LG', 'HTC', 'Motorola', 'Huawei', 'Lenovo', 'Xiaomi', 'Acer', 'Asus', 'BlackBerry',
@@ -66,34 +66,29 @@ class FeatureFunctions(object):
                 return 1
         return 0
 
-    #------------------------------- Phone tag ---------------------------------------------------------
-    # The following is an example for you to code your own functions
-    # returns True if wi is in phones tag = Phone
-    # h is of the form {'ta':xx, 'tb':xx, 'wn':xx, 'i':xx}
-    # self.wmap provides a list of sentences (tokens) where each element in the list is a dict {'words': word_token_list, 'pos_tags': pos_tags_list}
-    # each pos_tag is a tuple returned by NLTK tagger: (word, tag)
-    # h["wn"] refers to a sentence number
     
     def fPhone_1(self, h, tag):
         if tag != "Phone":
             return 0
         words = self.wmap[h["wn"]]['words']        
         if (words[h["i"]].lower() in phones):
-           self.check = True
-           return 1
+	    self.check = True
+            return 1
         else:
             return 0
 
+   #Preceded by Org
    def fPhone_2(self, h, tag):
 	if tag != "Phone":
 		return 0
 	words = self.wmap[h["wn"]]['words']
 	if (h['tb'])== "Org":
-            self.check = True
+	        self.check = True
             return 1
 	else:
 		return 0
 
+   #Preceded by Version
    def fPhone_3(self, h, tag):
 	if tag != "Phone":
 		return 0
@@ -104,7 +99,7 @@ class FeatureFunctions(object):
 	else:
 	    return 0
 	
-
+   #Preceded by Family
    def fPhone_4(self, h, tag):
 	if tag != "Phone":
 		return 0
@@ -114,6 +109,34 @@ class FeatureFunctions(object):
             return 1
 	else:
             return 0
+
+   #Preceded by family and starts with capital letter
+   def fVersion_1(self, h, tag):
+	if tag != "Version":
+		return 0
+	words = self.wmap[h["wn"]]['words']
+	if (h['tb'])== "Family":
+	        self.check = True
+		return 1
+		if((words[h['i']][0]).isupper()):
+	                self.check = True
+			return 1
+		else:
+			return 0
+	else:
+		return 0
+	
+
+   #preceded by os or version
+   def fVersion_2(self, h, tag):
+	if tag != "Version":
+		return 0
+	words = self.wmap[h["wn"]]['words']
+	if (h['tb'] == "OS" or h['tb'] == "Version"):
+	        self.check = True
+		return 1
+	else:
+		return 0
 
     def fOrg_1(self, h, tag):
         if tag != "Org":
@@ -291,27 +314,240 @@ class FeatureFunctions(object):
                     feats.append(0)
         return feats
 
- 
-   '''
-   def fVersion_1(self, h, tag):
+
+#Preceded by family and starts with capital letter
+def fVersion_1(self, h, tag):
 	if tag != "Version":
 		return 0
 	words = self.wmap[h["wn"]]['words']
 	if (h['tb'])== "Family":
+        self.check = True
 		return 1
-		if(words[])
+		if((words[h['i']][0]).isupper()):
+            self.check = True
+			return 1
+		else:
+			return 0
 	else:
 		return 0
-	
-   '''
-    #------------------------------- Functions for Org tag ---------------------------------------------------------
-    #------------------------------- Functions for Family tag ---------------------------------------------------------  
-    #------------------------------- Functions for OS tag ---------------------------------------------------------        
-    #------------------------------- Functions for Version tag ---------------------------------------------------------
-    #------------------------------- Functions for Other tag ---------------------------------------------------------
-    #------------------------------- Functions for Price tag ---------------------------------------------------------  
-    #------------------------------- Functions for Size tag ---------------------------------------------------------  
-    #------------------------------- Functions for Feature tag ---------------------------------------------------------  
+
+
+    #preceded by os or version
+    def fVersion_2(self, h, tag):
+	 if tag != "Version":
+		return 0
+	 words = self.wmap[h["wn"]]['words']
+	 if (h['tb'] == "OS" or h['tb'] == "Version"):
+        self.check = True
+		return 1
+	 else:
+		return 0
+
+   # OS version version
+   def fVersion_3(self, h, tag):
+    if tag != "Version":
+        return 0
+    words = self.wmap[h["wn"]]['words']
+    if (h['ta'] == "OS" or h['tb'] == "Version"):
+        self.check = True
+        return 1
+    else:
+        return 0
+
+
+   # preceded by family(model)
+   def fVersion_4(self, h, tag):
+	if tag != "Version":
+		return 0
+	words = self.wmap[h["wn"]]['words']
+	if ( h['tb'] == "Family"):
+	        self.check = True
+		return 1
+	else:
+		return 0
+
+
+
+
+   #org,family,version
+   def fVersion_5(self, h, tag):
+	if tag != "Version":
+		return 0
+	words = self.wmap[h["wn"]]['words']
+	if (h['ta'] == "Org" and h['tb'] == "Family"):
+	        self.check = True
+		return 1
+	else:
+		return 0
+
+   #version version - second version is text
+   def fVersion_6(self, h, tag):
+	if tag != "Version":
+		return 0
+	words = self.wmap[h["wn"]]['words']
+	if (h['tb'] == "Version" and words[h['i']].isalpha() ):
+	        self.check = True
+		return 1
+	else:
+		return 0
+
+   #	version is a string and preceeded text is "android"
+   def fVersion_7(self, h, tag):
+	if tag != "Version":
+		return 0
+	words = self.wmap[h["wn"]]['words']
+	if (words[h['i']].isalpha and (words[h['i']-1]=="Android" or words[h['i']-1]=="android")):
+	        self.check = True
+		return 1
+	else:
+		return 0
+
+   #version preceeded with word "with" - eg with "lolipop"
+   def fVersion_8(self, h, tag):
+	if tag != "Version":
+		return 0
+	words = self.wmap[h["wn"]]['words']
+	if (words[h['i']-1]=="with"):
+	        self.check = True
+		return 1
+	else:
+		return 0
+
+   #"upgradable" in w-1 or w-2 and w is a version
+   def fVersion_9(self, h, tag):
+	if tag != "Version":
+		return 0
+	words = self.wmap[h["wn"]]['words']
+	if (words[h['i']-1]=="upgradable" or words[h['i']-2]=="upgradable"):
+	        self.check = True
+		return 1
+	else:
+		return 0
+
+   #next word is "update"
+   def fVersion_10(self, h, tag):
+	if tag != "Version":
+		return 0
+	words = self.wmap[h["wn"]]['words']
+	if (words[h['i']+1]):
+		if (words[h['i']+1] == "update"):
+	                self.check = True
+			return 1
+		else:
+			return 0
+
+
+   #Preceded by org and starts with capital letter 
+   def fFamily_1(self, h, tag):
+	if tag != "Family":
+		return 0
+	words = self.wmap[h["wn"]]['words']
+	if (h['tb'] == "Org" and words[h['i']][0].isupper()):
+	        self.check = True
+		return 1
+	else:
+		return 0
+
+   #followed by numbers  
+   def fFamily_2(self, h, tag):
+	if tag != "Family":
+		return 0
+	words = self.wmap[h["wn"]]['words']
+	if (words[h['i']+1]):
+		if (words[h['i']+1].isdigit()):
+	                self.check = True
+			return 1
+		else:
+			return 0
+
+   #followed by word with capital letter or combination of letters and numbers
+   def fFamily_3(self, h, tag):
+	if tag != "Family":
+		return 0
+	words = self.wmap[h["wn"]]['words']
+	pat = "[a-z]*.*[0-9]*"
+	sub = words[h['i']]
+	if (words[h['i']+1][0].isupper() or re.search(pat,sub)):
+	        self.check = True
+		return 1
+	else:
+		return 0
+
+   #Family followed by [phone or others in list]
+   def fFamily_4(self, h, tag):
+	if tag != "Family":
+		return 0
+	words = self.wmap[h["wn"]]['words']
+	next_word = words[h['i']+1]
+	if (next_word in phones):
+	        self.check = True
+		return 1
+	else:
+		return 0
+
+   #followed by number in texts (one - 1)
+   def fFamily_5(self, h, tag):
+	if tag != "Family":
+		return 0
+	words = self.wmap[h["wn"]]['words']
+	tags = self.wmap[h["wn"]]['pos_tags']
+	next_word = words[h['i']+1]
+	if (tags([next_word])=='CD'):
+	        self.check = True
+		return 1
+	else:
+		return 0
+
+   #if t-2 = phone and previous word is "with" or "has" or "have"
+   def fFeature_1(self, h, tag):
+	if tag !="Feature":
+		return 0
+	words = self.wmap[h["wn"]]['words']
+	if(words[h['i']-1]):
+		if(h['tb']=="Phone" and (words[h['i']-1]=="with" or words[h['i']-1]=="have" or words[h['i']-1]=="has")):
+	                self.check = True
+			return 1
+		else:
+			return 0
+
+
+   #pos tag is CD and next word is inches, or inch i.e present in the size list.
+   def fFeature_2(self, h, tag):
+	if tag !="Feature":
+		return 0
+	words = self.wmap[h["wn"]]['words']
+	tags = self.wmap[h["wn"]]['pos_tags']
+	next_word = words[h['i']+1]
+	if(tags[next_word]=='CD' and (next_word in size_list)):
+	        self.check = True
+		return 1
+	else:
+		return 0
+
+   #if the word is an inch,inches etc and is preceded by cd tag(nltk pos tag)
+   def fFeature_3(self, h, tag):
+	if tag !="Feature":
+		return 0
+	words = self.wmap[h["wn"]]['words']
+	tags = self.wmap[h["wn"]]['pos_tags']
+	prev_word = words[h['i']-1]
+	if(tags[prev_word]=='CD' and (words[h['i']] in size_list)):
+	        self.check = True
+		return 1
+	else:
+		return 0
+
+   #previous word is a feature( for screen size etc)
+   def fFeature_4(self, h, tag):
+	if tag !="Feature":
+		return 0
+	words = self.wmap[h["wn"]]['words']
+	if(h['tb']=="Feature"):
+	        self.check = True
+		return 1
+	else:
+		return 0
+
 
 if __name__ == "__main__":
     pass
