@@ -111,15 +111,14 @@ class FeatureFunctions(object):
 	else:
 		return 0
 
+    def fOrg_1(self, h, tag):
+        
 
-   def fPhone_5(self, h, tag):
-	if tag != "Phone":
-		return 0
-	words = self.wmap[h["wn"]]['words']
-	if (words['i']) in phones:
-		return 1
-	else:
-		return 0
+    def evaluate(self, xi, tag):
+        feats = []
+        for f in self.flist:
+            feats.append(int(f(xi, tag)))
+        return feats
  
    '''
    def fVersion_1(self, h, tag):
