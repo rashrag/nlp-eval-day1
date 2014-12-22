@@ -40,6 +40,7 @@ class FeatureFunctions(object):
         self.wmap = {}
         self.flist = {} #[self.f1, self.f2, self.f3, self.f4, self.f5, self.f6, self.f7, self.f8, self.f9, self.f10, self.f11, self.f12, self.f13]
         self.fdict = {}
+        self.check = False
         for k, v in FeatureFunctions.__dict__.items():
             if hasattr(v, "__call__"):
                 if k[0] == 'f':
@@ -78,7 +79,8 @@ class FeatureFunctions(object):
             return 0
         words = self.wmap[h["wn"]]['words']        
         if (words[h["i"]].lower() in phones):
-            return 1
+           self.check = True
+           return 1
         else:
             return 0
 
@@ -87,7 +89,8 @@ class FeatureFunctions(object):
 		return 0
 	words = self.wmap[h["wn"]]['words']
 	if (h['tb'])== "Org":
-		return 1
+            self.check = True
+            return 1
 	else:
 		return 0
 
@@ -96,9 +99,10 @@ class FeatureFunctions(object):
 		return 0
 	words = self.wmap[h["wn"]]['words']
 	if (h['tb'])== "Version":
-		return 1
+            self.check = True
+            return 1
 	else:
-		return 0
+	    return 0
 	
 
    def fPhone_4(self, h, tag):
@@ -106,15 +110,17 @@ class FeatureFunctions(object):
 		return 0
 	words = self.wmap[h["wn"]]['words']
 	if (h['tb'])== "Family":
-		return 1
+            self.check = True
+            return 1
 	else:
-		return 0
+            return 0
 
     def fOrg_1(self, h, tag):
         if tag != "Org":
             return 0
         words = self.wmap[h["wn"]]['words']        
         if (words[h["i"]].lower() in org_list1):
+            self.check = True
             return 1
         else:
             return 0
@@ -125,6 +131,7 @@ class FeatureFunctions(object):
         words = self.wmap[h["wn"]]['words']        
         if (words[h["i"]].lower() in org_list1):
             if(words[h["i"]+ 1].lower() in phones):
+                self.check = True
                 return 1
         else:
             return 0
@@ -132,8 +139,9 @@ class FeatureFunctions(object):
         if tag != "Org":
             return 0
         words = self.wmap[h["wn"]]['words']
-        if(words[h["i"] - 1 ].lower() == "from" || words[h["i"] - 1 ].lower() == "by"):
+        if(words[h["i"] - 1 ].lower() == "from"):
             if(words[h["i"]].lower() in org_list1):
+                self.check = True
                 return 1
         else:
             return 0
@@ -142,7 +150,135 @@ class FeatureFunctions(object):
         if tag != "Org":
             return 0
         words = self.wmap[h["wn"]]['words']
+        if(words[h["i"] - 1 ].lower() == "by"):
+            if(words[h["i"]].lower() in org_list1):
+                self.check = True
+                return 1
+        else:
+            return 0
+    def fOrg_5(self, h, tag): #low
+        if tag != "Org":
+            return 0
+        words = self.wmap[h["wn"]]['words']
+        if(words[h["i"] - 1 ].lower().startswith('wh')):
+            if(words[h["i"]].lower() in org_list1):
+                self.check = True
+                return 1
+        else:
+            return 0
+
+    def fOS_1(self, h, tag):
+        if tag != "OS":
+            return 0
+        words = self.wmap[h["wn"]]['words']
+        if( words[h["i"]].lower() in os_list1):
+            self.check = True
+            return 1
+        else:
+            return 0
+    def fOS_2(self, h, tag):
+        if tag != "OS":
+            return 0
+        words = self.wmap[h["wn"]]['words']
+        if( words[h["i"]+ 1 ].lower() in phones):
+            self.check = True
+            return 1
+        else:
+            return 0
+    def fOS_3(self, h, tag): #low
+        if tag != "OS":
+            return 0
+        words = self.wmap[h["wn"]]['words']
+        if( words[h["i"] - 2 ].lower() == "supported"):
+            self.check = True
+            return 1
+        else:
+            return 0
+    def fOS_4(self, h, tag): #low
+        if tag != "OS":
+            return 0
+        words = self.wmap[h["wn"]]['words']
+        if( words[h["i"] - 2].lower() == "run"):
+            self.check = True
+            return 1
+        else:
+            return 0
         
+    def fOS_5(self, h, tag):
+        if tag != "OS":
+            return 0
+        words = self.wmap[h["wn"]]['words']
+        tags = self.wmap[h["wn"]]['pos_tags']
+        if( words[h["i"]].lower() in os_list1):
+            if( tags[h["i"] + 1] == "CD"):
+                self.check = True
+                return 1
+        else:
+            return 0
+
+    def fPrice_1(self, h, tag): 
+        if tag != "Price":
+            return 0
+        words = self.wmap[h["wn"]]['words']
+        if( words[h["i"]].lower().endswith('k')):
+            self.check = True
+            return 1
+        else:
+            return 0
+
+    def fPrice_2(self, h, tag): 
+        if tag != "Price":
+            return 0
+        words = self.wmap[h["wn"]]['words']
+        if( words[h["i"]].lower().endswith('usd')):
+            self.check = True
+            return 1
+        else:
+            return 0
+
+    def fPrice_3(self, h, tag): 
+        if tag != "Price":
+            return 0
+        words = self.wmap[h["wn"]]['words']
+        tags = self.wmap[h["wn"]]['pos_tags']
+        if( tags[h["i"]] == "CD"):
+            if(len(words[h["i"]]) > 4):
+                self.check = True
+                return 1
+        else:
+            return 0
+
+    def fPrice_4(self, h, tag): 
+        if tag != "Price":
+            return 0
+        words = self.wmap[h["wn"]]['words']
+        if( "," in words[h["i"]].lower()):
+            self.check = True
+            return 1
+        else:
+            return 0
+
+    def fPrice_5(self, h, tag): 
+        if tag != "Price":
+            return 0
+        words = self.wmap[h["wn"]]['words']
+        if( words[h["i"]].lower() in currency_symbols):
+            self.check = True
+            return 1
+        else:
+            return 0
+
+    def fPrice_6(self, h, tag): 
+        if tag != "Price":
+            return 0
+        words = self.wmap[h["wn"]]['words']
+        tags = self.wmap[h["wn"]]['pos_tags']
+        if( h["tb"] == "Price"):
+            if(tags[h["i"]] == "CD"):
+                self.check = True
+                return 1
+        else:
+            return 0
 
     def evaluate(self, xi, tag):
         feats = []
