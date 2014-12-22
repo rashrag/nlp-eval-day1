@@ -42,7 +42,8 @@ class MyMaxEnt(object):
                 feats = self.all_data.get(tag, [])
                 val = self.get_feats(h[0], tag)
                 feats.append(val) 
-                self.all_data[tag] = feats '''feats has the feature vector for a particular h'''
+                self.all_data[tag] = feats 
+		'''feats has the feature vector for a particular h'''
                 if (h[1] == tag):
                     self.dataset.append(val)
 	'''remove this'''
@@ -82,7 +83,7 @@ class MyMaxEnt(object):
         feat = self.get_feats(xi, tag)
         dot_vector = numpy.dot(numpy.array(feat), self.model)
         for t in self.tag_set:
-            feat = self.get_feats(xi, t            dp = numpy.dot(numpy.array(feat), self.model)
+            feat = self.get_feats(xi, t, dp = numpy.dot(numpy.array(feat), self.model)
             if dp == 0:
                 normalizer += 1.0
             else:

@@ -41,13 +41,13 @@ def build_history(data_list, supported_tags):
                 history["wn"] = count
                 history_list.append((history, updates[i]['tag'], ))
             count += 1
-    return (history_list, sents, expected)
+	return (history_list, sents, expected)
 
 def call():
     supported_tags_list = ["Org", "Family", "Price", "Phone", "Feature", "OS", "Version", "Other"]
     data = json.loads(open("new_all_data.json").read())['root']
     
-    return(build_history(data, supported_tags_list))
+     return(build_history(data, supported_tags_list))
    
 
 

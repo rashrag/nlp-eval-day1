@@ -82,7 +82,8 @@ class MyMaxEnt(object):
         feat = self.get_feats(xi, tag)
         dot_vector = numpy.dot(numpy.array(feat), self.model)
         for t in self.tag_set:
-            feat = self.get_feats(xi, t            dp = numpy.dot(numpy.array(feat), self.model)
+            feat = self.get_feats(xi, t)
+            dp = numpy.dot(numpy.array(feat), self.model)
             if dp == 0:
                 normalizer += 1.0
             else:
