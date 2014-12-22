@@ -110,34 +110,6 @@ class FeatureFunctions(object):
 	else:
             return 0
 
-   #Preceded by family and starts with capital letter
-   def fVersion_1(self, h, tag):
-	if tag != "Version":
-		return 0
-	words = self.wmap[h["wn"]]['words']
-	if (h['tb'])== "Family":
-	        self.check = True
-		return 1
-		if((words[h['i']][0]).isupper()):
-	                self.check = True
-			return 1
-		else:
-			return 0
-	else:
-		return 0
-	
-
-   #preceded by os or version
-   def fVersion_2(self, h, tag):
-	if tag != "Version":
-		return 0
-	words = self.wmap[h["wn"]]['words']
-	if (h['tb'] == "OS" or h['tb'] == "Version"):
-	        self.check = True
-		return 1
-	else:
-		return 0
-
     def fOrg_1(self, h, tag):
         if tag != "Org":
             return 0
@@ -316,18 +288,18 @@ class FeatureFunctions(object):
 
 
 #Preceded by family and starts with capital letter
-def fVersion_1(self, h, tag):
+    def fVersion_1(self, h, tag):
 	if tag != "Version":
 		return 0
 	words = self.wmap[h["wn"]]['words']
 	if (h['tb'])== "Family":
-        self.check = True
-		return 1
-		if((words[h['i']][0]).isupper()):
             self.check = True
-			return 1
-		else:
-			return 0
+	    return 1
+	    if((words[h['i']][0]).isupper()):
+                self.check = True
+		return 1
+            else:
+		return 0
 	else:
 		return 0
 
@@ -338,7 +310,7 @@ def fVersion_1(self, h, tag):
 		return 0
 	 words = self.wmap[h["wn"]]['words']
 	 if (h['tb'] == "OS" or h['tb'] == "Version"):
-        self.check = True
+         self.check = True
 		return 1
 	 else:
 		return 0
@@ -547,7 +519,13 @@ def fVersion_1(self, h, tag):
 		return 1
 	else:
 		return 0
-
+    def fOther_1(self, h, tag):
+        if tag != "Other":
+            return 0
+        if self.check == False:
+            return 1
+        else:
+                return 0
 
 if __name__ == "__main__":
     pass
